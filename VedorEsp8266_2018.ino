@@ -12,12 +12,10 @@ const char* MQTT_SERVER = "projetos-pf.ifrn.edu.br"; //Broker do Mosquitto.org
 #define SUBSCRIBE_TOPIC         "home/test"   
  
 const int CHECA_SENSOR = 10; 
-uint32_t sleep_time_s = 30 * 1000000;
-
+uint32_t sleep_time_s = 30 * 1000000; // equivale a 30 segundos
 
 WiFiClient CLIENT;
 PubSubClient MQTT(CLIENT);
-
 
 //CONFIGURAÇÃO DA INTERFACE DE REDE
 void setupWIFI() {
@@ -30,6 +28,7 @@ void setupWIFI() {
   }
 }
 
+//************************ Função Setap *******************************
 void setup(void) {
  
   Serial.begin(115200);
@@ -42,14 +41,20 @@ void setup(void) {
     reconectar();
    }
 
-   Serial.println("Enviando a mensagem!!!");
+   Serial.println("Enviando a Notificaçao!!!");
    enviarNotificacao();
 
-   delay(1000);
-   ESP.deepSleep(sleep_time_s); // hiberna por um tempo determinado.
+   delay(1000); 
+   // delay antes é necessário para o bom funcionamento do deepSleep
+   
+   ESP.deepSleep(sleep_time_s); // hiberna por um tempo predeterminado.
+   
+   // delay depois é necessário para o bom funcionamento do deepSleep
    delay(1000);
 }
 
+
+// *************************** Função Reconectar **********************
 void reconectar() {
   while (!MQTT.connected()) {
     Serial.println("Conectando ao Broker MQTT.");
@@ -64,10 +69,10 @@ void reconectar() {
   }
 }
 
-// **************************************************************************
 
+// ************************** Função Sensor ****************************
 String sensor() {
-  int sensorPin = A0;
+  int sensorPin = A0; // Pino da porta analógica
   int sensorValue = 0;
   int cont = 0;
   String mensagem;
@@ -77,7 +82,7 @@ String sensor() {
 
     Serial.println(sensorValue);
     
-    if(sensorValue > 5){ // teste usando valor do sensor igual a zero
+    if(sensorValue > 5){ // teste usando valor do sensor igual a 5
       cont++;            
     } 
     delay(2000); 
@@ -88,24 +93,28 @@ String sensor() {
   else {
     mensagem = "DESABASTECIDO\"}";
   }
-     return mensagem;
+     return mensagem; // retorna a string com valor, ABASTECIDO ou DESABASTECIDO
 }
 
-// *************************** enviarNotificacao *************************
+
+// ************************ Função EnviarNotificacao ************************
 void enviarNotificacao(){
   
   String sBuf = "{\"mac\":\"08:00:28:59:34:4D\",\"valor\":" + sensor();
  
-  char buf[sBuf.length()+2];
-  sBuf.toCharArray(buf,sBuf.length()+2);
-  Serial.println(strlen(buf));
-  Serial.println(buf);
-  MQTT.publish("vedor/abast", buf);
+  char buf[sBuf.length()+2]; // Cria um Array de char do tamanho de sBuf + 2
+  sBuf.toCharArray(buf,sBuf.length()+2); // Copia o conteudo de sBuf para buf
+  Serial.println(strlen(buf)); // Imprime o tamanho array buf
+  Serial.println(buf); // Imprime o conteudo do array buf
+  MQTT.publish("vedor/abast", buf); // publica a notificação
 
-  CLIENT.stop();  
+  CLIENT.stop(); // linha pode ser retirada
 }
 
-// ************************************************************************
-void loop(void) { }
 
+// ***************************  Função Loop ***********************************
+void loop(void) { 
+  // Não faz nada, toda logica tem que estar no Setup
+  // devido o fato do programa hiberna
+}
 // Fim programa
