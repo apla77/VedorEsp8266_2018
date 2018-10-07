@@ -1,12 +1,10 @@
-// http://projetos-pf.ifrn.edu.br/vedor/notificacoes/listar 
-
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <PubSubClient.h>
 
 
-const char* SSID = "brisa-72485"; //Seu SSID da Rede WIFI
-const char* PASSWORD = "ferr3ira"; // A Senha da Rede WIFI
+const char* SSID = "minha_rede"; //Seu SSID da Rede WIFI
+const char* PASSWORD = "1234"; // A Senha da Rede WIFI
 const char* MQTT_SERVER = "projetos-pf.ifrn.edu.br"; //Broker do Mosquitto.org
 
 
